@@ -54,6 +54,23 @@ select {
   outline-offset: var(--space-3xs);
 }
 
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--space-sm);
+  z-index: var(--z-sticky-nav);
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+}
+
+.skip-link:focus {
+  top: var(--space-sm);
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -753,6 +770,27 @@ p {
   transition-delay: 140ms;
 }
 
+.motion-ready .timeline-item,
+.motion-ready .systems-list article,
+.motion-ready .credential-primary,
+.motion-ready .credential-stack article,
+.motion-ready .language-panel {
+  opacity: 0;
+  transform: translateY(var(--space-md));
+}
+
+.motion-ready .timeline-item.is-visible,
+.motion-ready .systems-list article.is-visible,
+.motion-ready .credential-primary.is-visible,
+.motion-ready .credential-stack article.is-visible,
+.motion-ready .language-panel.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-property: opacity, transform;
+  transition-duration: var(--dur-slow);
+  transition-timing-function: var(--ease-out);
+}
+
 @media (hover: hover) {
   .brand-lockup:hover .brand-mark {
     border-color: var(--color-accent);
@@ -1060,7 +1098,12 @@ p {
 
   .motion-ready .hero-copy,
   .motion-ready .ops-map,
-  .motion-ready .hero-ledger {
+  .motion-ready .hero-ledger,
+  .motion-ready .timeline-item,
+  .motion-ready .systems-list article,
+  .motion-ready .credential-primary,
+  .motion-ready .credential-stack article,
+  .motion-ready .language-panel {
     opacity: 1;
     transform: none;
   }

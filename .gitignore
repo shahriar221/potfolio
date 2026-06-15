@@ -1,0 +1,16 @@
+# Screenshots & design artifacts
+*.png
+
+# PDF (downloadable asset, not source)
+*.pdf
+
+# Dev server logs
+output/
+
+# Tooling
+.playwright-mcp/
+.hallmark/
+.memsearch/
+.mimocode/
+mimocode.jsonc
+skills-lock.json

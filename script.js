@@ -103,7 +103,9 @@ if (sections.length > 0) {
 }
 
 const revealTargets = Array.from(
-  document.querySelectorAll(".hero-copy, .ops-map, .hero-ledger")
+  document.querySelectorAll(
+    ".hero-copy, .ops-map, .hero-ledger, .timeline-item, .systems-list article, .credential-primary, .credential-stack article, .language-panel"
+  )
 );
 
 if ("IntersectionObserver" in window && revealTargets.length > 0) {
