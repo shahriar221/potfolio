@@ -39,6 +39,19 @@ const getCurrentSectionId = () => {
 };
 
 let activeLinkFrame = null;
+let lockedActiveId = null;
+let releaseActiveLockTimer = null;
+
+const releaseActiveLock = () => {
+  lockedActiveId = null;
+  queueActiveLinkUpdate();
+};
+
+const lockActiveLink = (id) => {
+  lockedActiveId = id;
+  window.clearTimeout(releaseActiveLockTimer);
+  releaseActiveLockTimer = window.setTimeout(releaseActiveLock, 1200);
+};
 
 const queueActiveLinkUpdate = () => {
   if (activeLinkFrame) {
@@ -47,6 +60,23 @@ const queueActiveLinkUpdate = () => {
 
   activeLinkFrame = window.requestAnimationFrame(() => {
     activeLinkFrame = null;
+
+    if (lockedActiveId) {
+      const target = document.getElementById(lockedActiveId);
+      const targetTop = target ? target.offsetTop - getHeaderOffset() : 0;
+      const distance = Math.abs(window.scrollY - targetTop);
+      const atPageEnd =
+        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+
+      if (distance > 12 && !(lockedActiveId === sections.at(-1).id && atPageEnd)) {
+        return;
+      }
+
+      window.clearTimeout(releaseActiveLockTimer);
+      releaseActiveLockTimer = window.setTimeout(releaseActiveLock, 120);
+      return;
+    }
+
     const id = getCurrentSectionId();
 
     if (id) {
@@ -62,6 +92,7 @@ if (sections.length > 0) {
     link.addEventListener("click", () => {
       const id = link.getAttribute("href").slice(1);
       setActiveLink(id);
+      lockActiveLink(id);
     });
   });
 
