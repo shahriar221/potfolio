@@ -9,24 +9,66 @@ const setActiveLink = (id) => {
   });
 };
 
-if ("IntersectionObserver" in window && sections.length > 0) {
-  const navObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+const getHeaderOffset = () => {
+  const header = document.querySelector(".site-header");
+  return header ? header.getBoundingClientRect().height : 0;
+};
 
-      if (visible) {
-        setActiveLink(visible.target.id);
-      }
-    },
-    {
-      rootMargin: "-28% 0px -58% 0px",
-      threshold: [0.15, 0.35, 0.6],
+const getCurrentSectionId = () => {
+  if (sections.length === 0) {
+    return null;
+  }
+
+  const scrollBottom = window.scrollY + window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+
+  if (scrollBottom >= documentHeight - 2) {
+    return sections.at(-1).id;
+  }
+
+  const probeY =
+    window.scrollY + getHeaderOffset() + Math.min(window.innerHeight * 0.32, 220);
+
+  if (probeY < sections[0].offsetTop) {
+    return null;
+  }
+
+  return sections.reduce((currentId, section) => {
+    return section.offsetTop <= probeY ? section.id : currentId;
+  }, sections[0].id);
+};
+
+let activeLinkFrame = null;
+
+const queueActiveLinkUpdate = () => {
+  if (activeLinkFrame) {
+    return;
+  }
+
+  activeLinkFrame = window.requestAnimationFrame(() => {
+    activeLinkFrame = null;
+    const id = getCurrentSectionId();
+
+    if (id) {
+      setActiveLink(id);
+    } else {
+      navLinks.forEach((link) => link.setAttribute("aria-current", "false"));
     }
-  );
+  });
+};
 
-  sections.forEach((section) => navObserver.observe(section));
+if (sections.length > 0) {
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const id = link.getAttribute("href").slice(1);
+      setActiveLink(id);
+    });
+  });
+
+  window.addEventListener("scroll", queueActiveLinkUpdate, { passive: true });
+  window.addEventListener("resize", queueActiveLinkUpdate);
+  window.addEventListener("load", queueActiveLinkUpdate);
+  queueActiveLinkUpdate();
 }
 
 const revealTargets = Array.from(

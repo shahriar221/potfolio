@@ -183,7 +183,6 @@ select {
 }
 
 .site-nav a[aria-current="true"]::after,
-.site-nav a:hover::after,
 .site-nav a:focus-visible::after {
   opacity: 1;
   transform: scaleX(1);
@@ -770,6 +769,11 @@ p {
   .site-nav a:hover {
     background: var(--color-paper-2);
     color: var(--color-ink);
+  }
+
+  .site-nav a:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
   }
 
   .button-primary:hover {
